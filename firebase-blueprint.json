@@ -1,0 +1,50 @@
+{
+  "entities": {
+    "Decision": {
+      "title": "Decision",
+      "description": "A record of a system decision or operator action.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the decision." },
+        "ts": { "type": "string", "description": "Timestamp of the decision." },
+        "orderRef": { "type": "string", "description": "Reference to the order." },
+        "predictionId": { "type": "string", "description": "ID of the prediction model." },
+        "dbCheck": { "type": "string", "enum": ["found", "not_found"], "description": "Database check result." },
+        "action": { "type": "string", "enum": ["accept", "reject", "hold"], "description": "Action taken." },
+        "drift": { "type": "boolean", "description": "Whether data drift was detected." },
+        "actor": { "type": "string", "description": "The entity that performed the action." },
+        "owner": { "type": "string", "description": "The system owner tag." },
+        "overrideUsed": { "type": "boolean", "description": "Whether a security override was used." },
+        "overrideReason": { "type": "string", "description": "Justification for the override." },
+        "reasonCode": { "type": "string", "description": "Code explaining the decision logic." },
+        "comment": { "type": "string", "description": "Optional operator comment." },
+        "sourceContext": { "type": "string", "description": "Context of the decision source." },
+        "guardrailState": { "type": "string", "enum": ["clean", "blocked", "warning"], "description": "State of the guardrails." },
+        "uid": { "type": "string", "description": "UID of the user who created the record." }
+      },
+      "required": ["id", "ts", "orderRef", "action", "uid"]
+    },
+    "SystemEvent": {
+      "title": "SystemEvent",
+      "description": "A log of a system-level event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["info", "success", "warning", "security"] },
+        "message": { "type": "string" },
+        "ts": { "type": "string" }
+      },
+      "required": ["id", "type", "message", "ts"]
+    }
+  },
+  "firestore": {
+    "/decisions/{decisionId}": {
+      "schema": "Decision",
+      "description": "Collection of all system decisions."
+    },
+    "/events/{eventId}": {
+      "schema": "SystemEvent",
+      "description": "Log of system events."
+    }
+  }
+}

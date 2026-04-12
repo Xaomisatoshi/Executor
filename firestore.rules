@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: decisions
+    // Document ID: decisionId
+    // Fields:
+    //   - id: string (required)
+    //   - ts: string (required)
+    //   - orderRef: string (required)
+    //   - predictionId: string
+    //   - dbCheck: string (found/not_found)
+    //   - action: string (accept/reject/hold)
+    //   - drift: bool
+    //   - actor: string
+    //   - owner: string
+    //   - overrideUsed: bool
+    //   - overrideReason: string
+    //   - reasonCode: string
+    //   - comment: string
+    //   - sourceContext: string
+    //   - guardrailState: string
+    //   - uid: string (required)
+    //
+    // Collection: events
+    // Document ID: eventId
+    // Fields:
+    //   - id: string
+    //   - type: string (info/success/warning/security)
+    //   - message: string
+    //   - ts: string
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.uid;
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == request.auth.uid;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidDecision(data) {
+      let isAccept = data.action == 'accept';
+      let hasDrift = data.drift == true;
+      let isNotFound = data.db_check == 'not_found';
+      let isOverride = data.override_used == true;
+      let hasReason = ('override_reason' in data) && (data.override_reason is string) && (data.override_reason.size() >= 12);
+
+      // Business Logic: Accept is only allowed if data is clean OR if an authorized override is provided
+      let businessLogicValid = !isAccept || (!hasDrift && !isNotFound) || (isOverride && hasReason);
+
+      return (data.ts is string) &&
+             (data.order_ref is string) &&
+             (data.order_ref.size() < 100) &&
+             (data.prediction_id is string) &&
+             (data.db_check in ['found', 'not_found']) &&
+             (data.action in ['accept', 'reject', 'hold']) &&
+             (data.drift is bool) &&
+             (data.actor is string) &&
+             (data.owner is string) &&
+             (data.override_used is bool) &&
+             (data.override_reason is string) &&
+             (data.reason_code is string) &&
+             (data.source_context is string) &&
+             (data.guardrail_state in ['clean', 'warning', 'blocked']) &&
+             (data.uid == request.auth.uid) &&
+             businessLogicValid;
+    }
+
+    function isValidEvent(data) {
+      return data.id is string &&
+             data.type in ['info', 'success', 'warning', 'security'] &&
+             data.message is string &&
+             data.message.size() < 500;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /decisions/{decisionId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && isValidDecision(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /events/{eventId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidEvent(request.resource.data);
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}
