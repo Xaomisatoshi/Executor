@@ -1,20 +1,20 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Executor-Core
 
-# Run and deploy your AI Studio app
+## Mandat
 
-This contains everything you need to run your app locally.
+Executor-Core ist die unabhängige Architektur- und Prüfinstanz des KI-Klarblick-Agentensystems. Er beantwortet: **„Ist das sauber, sicher, widerspruchsfrei und langfristig tragfähig?“**
 
-View your app in AI Studio: https://ai.studio/apps/c0d912a1-1b79-405b-bd45-ce063b9d6259
+## Systemposition
 
-## Run Locally
+- Clarity Master Flow führt operativ: Arbeit, Kontext, Zuständigkeiten und Übergaben.
+- Executor prüft Rollen, Grenzen, Risiken, Widersprüche und strukturelle Änderungen.
+- Executor kann eskalieren und Einwände begründen, aber nicht final entscheiden.
+- Finale Entscheidung: **Super Lenusi / Developer**.
 
-**Prerequisites:**  Node.js
+## Dokumente
 
+WORKFLOW.md, INTERFACES.md, EXAMPLES.md und AGENT_INTERPRETATION.md definieren die aktuelle Executor-Core-Logik. LEGACY_STATUS.md trennt sie von der historischen Operator-Console.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Nachweisgrenze
+
+Dieses Repository dokumentiert die Soll-Logik. Es belegt keine aktive ChatGPT- oder Workspace-Konfiguration.
