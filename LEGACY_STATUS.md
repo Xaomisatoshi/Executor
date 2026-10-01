@@ -1,7 +1,16 @@
-# Legacy-Status der Operator-Console
+# Bereinigung des Legacy-Bestands
 
-Die vorhandenen AI-Studio-, Firebase-, Gemini- und Operator-Console-Dateien sind historische Referenzartefakte. Sie definieren **nicht** die heutige Rolle von Executor-Core.
+Am 01.10.2026 wurden die historischen Google-/AI-Studio-/Firebase-/Gemini-Operator-Console-Dateien aus dem kanonischen Executor-Repository entfernt.
 
-- Keine Datei wurde durch diesen Rollenwechsel gelöscht.
-- Die alte Anwendung bleibt getrennt von der aktuellen Agentenlogik zu betrachten.
-- Eine spätere Archivierung, Verschiebung oder Stilllegung erfordert eine eigene Freigabe durch Super Lenusi / Developer.
+Erhalten bleibt ausschließlich die aktuelle Executor-Core-Dokumentation:
+
+- README.md
+- AGENTS.md
+- WORKFLOW.md
+- INTERFACES.md
+- EXAMPLES.md
+- AGENT_INTERPRETATION.md
+- LEGACY_STATUS.md
+- CLEANUP_LOG.md
+
+Die Bereinigung betrifft keine Live-ChatGPT-Konfiguration. Eine Wiederherstellung ist über die Git-Historie möglich.
